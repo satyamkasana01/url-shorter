@@ -4,22 +4,14 @@ import { connectDB } from "./src/confing/mongo.confing.js";
 import { nanoid } from "nanoid";
 import dotenv from "dotenv";
 import { shortUrlModel } from "./src/models/shorturl.model.js";
+import { ShortUrlrouter } from "./src/routes/shortUrl.route.js";
 
 dotenv.config()
 
 app.use(express.json())
 app.use(express.urlencoded({extended:true}))
 
-app.post("/api/create", async (req,res)=>{
-    const {url} = req.body
-    const shortUrl = nanoid(7)
-    const newUrl = new shortUrlModel({
-        full_url:url,
-        short_url:shortUrl
-    })
-    await newUrl.save()
-    res.send(shortUrl)
-})
+app.post("/api/create",ShortUrlrouter)
 
 app.get("/:id", async (req, res) =>{
     const {id} = req.params // id = "x7Ab920"

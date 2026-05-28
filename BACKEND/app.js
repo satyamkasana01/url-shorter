@@ -1,28 +1,19 @@
 import express from "express";
 const app = express();
 import { connectDB } from "./src/confing/mongo.confing.js";
-import { nanoid } from "nanoid";
 import dotenv from "dotenv";
 import { shortUrlModel } from "./src/models/shorturl.model.js";
-import { ShortUrlrouter } from "./src/routes/shortUrl.route.js";
+import { ShortUrlrouter } from "./src/routes/shorturl.route.js";
+import { redirectFromShortUrl } from "./src/controller/shorturl.controller.js";
 
 dotenv.config()
 
 app.use(express.json())
 app.use(express.urlencoded({extended:true}))
 
-app.post("/api/create",ShortUrlrouter)
+app.use("/api/create",ShortUrlrouter)
 
-app.get("/:id", async (req, res) =>{
-    const {id} = req.params // id = "x7Ab920"
-    const url = await shortUrlModel.findOne({ short_url: id }) 
-
-    if(url){
-        res.redirect(url.full_url)
-    } else {
-        res.status(404).send("URL not found")
-    }
-})
+app.get("/:id", redirectFromShortUrl)
 
 app.listen(3000, () => {
     connectDB()

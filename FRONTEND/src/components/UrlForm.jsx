@@ -5,13 +5,16 @@ import axios from 'axios'
 
 const UrlForm = () => {
   const [url, setUrl] = useState('https://www.google.com')
+const [shortUrl, setShortUrl] = useState('')
+const[copied, setCopied] = useState(false)
 
   const handleSubmit = async (e) => {
     e.preventDefault()
 
     try {
       const data = await axios.post('http://localhost:3000/api/create', { url })
-      console.log(data.data)
+      //console.log(data.data)
+      setShortUrl(data.data.shortUrl)
     } catch (error) {
       console.log("Axios error:", error)
     }
@@ -39,6 +42,39 @@ const UrlForm = () => {
         className="w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50">
             Shorten URL
         </button>
+
+        {shortUrl && (
+  <div className="mt-4 p-3 bg-gray-100 rounded-md">
+    <p className="text-sm text-gray-700 mb-2">Short URL:</p>
+
+    <div className="flex items-center gap-2">
+      <input
+        type="text"
+        value={shortUrl}
+        readOnly
+        className="flex-1 px-3 py-2 border border-gray-300 rounded-md text-sm"
+      />
+
+      <button
+        type="button"
+        onClick={() => {
+          navigator.clipboard.writeText(shortUrl)
+            setCopied(true)
+
+            setTimeout(() => {
+                setCopied(false)
+            }, 500)
+        }}
+        className={`px-3 py-2 text-white rounded-md ${
+          copied ? "bg-green-600" : "bg-blue-500 hover:bg-blue-600"
+        }`}
+    >
+        {copied ? "Copied" : "Copy"}
+    </button>
+    </div>
+  </div>
+)}
+        
       </form>
   )
 

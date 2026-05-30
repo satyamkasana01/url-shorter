@@ -1,22 +1,23 @@
-import React from 'react'
+import React  from 'react'
 import { useState } from 'react'
 import axios from 'axios'
+import { createShortUrl } from '../api/shortUrl.api'
 
 
 const UrlForm = () => {
   const [url, setUrl] = useState('https://www.google.com')
-const [shortUrl, setShortUrl] = useState('')
-const[copied, setCopied] = useState(false)
+  const [shortUrl, setShortUrl] = useState('')
+  const[copied, setCopied] = useState(false)
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
+    e.preventDefault() 
 
     try {
-      const data = await axios.post('http://localhost:3000/api/create', { url })
-      //console.log(data.data)
-      setShortUrl(data.data.shortUrl)
+      const data = await createShortUrl(url)
+      //console.log(data)
+      setShortUrl(data.shortUrl) // This .shortUrl is not from this useState, it is from the backend response of the API which we are getting in data variable
     } catch (error) {
-      console.log("Axios error:", error)
+      console.log("Error:", error.message)
     }
   }
 

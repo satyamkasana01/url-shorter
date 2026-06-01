@@ -1,7 +1,8 @@
-import { asyncHandler } from "../utils/errorHandler";
+import { asyncHandler } from "../utils/errorHandler.js";
+import { registerUser } from "../services/auth.service.js";
 
 
-export const resister = asyncHandler(async (req,res)=>{
+export const register = asyncHandler(async (req,res)=>{
     const {name,email,password} = req.body
     const user = await registerUser(name, email, password)
     res.status(201).json({

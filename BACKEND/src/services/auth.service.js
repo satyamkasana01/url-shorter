@@ -15,3 +15,14 @@ export const registerUser = async (name, email, password) => {
     return token
     
 }
+
+export const loginUser = async (email, password) => {
+    // Implementation for user login
+    const user = await findUserbyEmail(email)
+    if(!user || user.password !== password) 
+        throw new AppError("Invalid email or password", 401)
+
+
+    const token = await signToken({id: user._id})
+    return token
+}

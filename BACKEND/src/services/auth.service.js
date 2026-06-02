@@ -3,6 +3,7 @@ import jsonwebtoken from "jsonwebtoken"
 import { createUser, findUserbyEmail } from "../dao/user.dao.js"
 import { signToken } from "../utils/helper.js"
 import { AppError } from "../utils/errorHandler.js"
+import bcrypt from "bcrypt"
 
 export const registerUser = async (name, email, password) => {
     // Implementation for registering a new user
@@ -10,7 +11,8 @@ export const registerUser = async (name, email, password) => {
     if(user) 
         throw new AppError("User already exists")
 
-    const newUser = await createUser(name, email, password)
+    const hashedPassword = await bcrypt.hash(password, 10)
+    const newUser = await createUser(name, email, hashedPassword)
     const token = await signToken({id: newUser._id})
     return token
     
@@ -19,10 +21,16 @@ export const registerUser = async (name, email, password) => {
 export const loginUser = async (email, password) => {
     // Implementation for user login
     const user = await findUserbyEmail(email)
-    if(!user || user.password !== password) 
+    if (!user) {
         throw new AppError("Invalid email or password", 401)
+    }
 
+    const isPasswordCorrect = await bcrypt.compare(password, user.password)
 
+    if (!isPasswordCorrect) {
+       throw new AppError("Invalid email or password", 401)
+    }
+    
     const token = await signToken({id: user._id})
     return token
 }
